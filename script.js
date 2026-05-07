@@ -1,13 +1,11 @@
 /** 
- * SNAKE ARENA: NEON EVOLUTION
- * ENGINE BY: AG
- * VERSION: 2.0 (Smooth Motion & Swipe Support)
+ * SNAKE ARENA: AG EDITION v2.2
+ * FEATURES: Organic Tapering Body, Slide Steering, Invincibility Buffer
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('current-score');
-const progressBar = document.getElementById('progress-bar');
 
 let snake = [];
 let food = { x: 0, y: 0 };
@@ -15,93 +13,101 @@ let score = 0;
 let angle = 0; 
 let speed = 4;
 let gameActive = false;
-let keys = {};
-let touchStartX = null;
+let isInvincible = true; 
 
-// Initialize
+// Input State
+let keys = {};
+let lastTouchX = null;
+
 window.onload = () => {
     resize();
-    simulateLoading();
+    let p = 0;
+    const loadInt = setInterval(() => {
+        p += Math.random() * 25;
+        document.getElementById('progress-bar').style.width = `${p}%`;
+        if (p >= 100) {
+            clearInterval(loadInt);
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('intro').classList.remove('hidden');
+            }, 500);
+        }
+    }, 200);
 };
 
-window.onresize = resize;
-
+window.addEventListener('resize', resize);
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
-function simulateLoading() {
-    let p = 0;
-    const interval = setInterval(() => {
-        p += Math.random() * 20;
-        progressBar.style.width = `${p}%`;
-        if (p >= 100) {
-            clearInterval(interval);
-            transition('loader', 'intro');
-        }
-    }, 200);
-}
-
-function transition(from, to) {
-    document.getElementById(from).classList.add('hidden');
-    setTimeout(() => {
-        document.getElementById(to).classList.remove('hidden');
-        if(to === 'game-container') startMatch();
-    }, 500);
-}
+// Disable default mobile gestures (pull-to-refresh)
+document.addEventListener('touchmove', (e) => { if (gameActive) e.preventDefault(); }, { passive: false });
 
 function startMatch() {
-    score = 0;
-    speed = 4;
-    angle = 0;
+    score = 0; speed = 4;
+    angle = -Math.PI / 2;
     snake = [];
-    for(let i=0; i<20; i++) {
-        snake.push({ x: canvas.width/2, y: canvas.height/2 });
+    isInvincible = true;
+    scoreEl.innerText = "000";
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    
+    // Initial short body to prevent instant crash
+    for(let i = 0; i < 12; i++) {
+        snake.push({ x: centerX, y: centerY + (i * 2) });
     }
+    
     spawnFood();
+    
+    document.getElementById('intro').classList.add('hidden');
+    document.getElementById('game-over').classList.add('hidden');
+    document.getElementById('game-container').classList.remove('hidden');
+    
     gameActive = true;
+    setTimeout(() => { isInvincible = false; }, 2000); // 2s Grace period
     requestAnimationFrame(update);
 }
 
 function spawnFood() {
-    food.x = Math.random() * (canvas.width - 60) + 30;
-    food.y = Math.random() * (canvas.height - 60) + 30;
+    const pad = 50;
+    food.x = Math.random() * (canvas.width - pad * 2) + pad;
+    food.y = Math.random() * (canvas.height - pad * 2) + pad;
 }
 
 function update() {
     if (!gameActive) return;
 
-    // Control Logic
-    if (keys['a'] || keys['ArrowLeft']) angle -= 0.08;
-    if (keys['d'] || keys['ArrowRight']) angle += 0.08;
+    // Movement logic
+    if (keys['a'] || keys['ArrowLeft']) angle -= 0.09;
+    if (keys['d'] || keys['ArrowRight']) angle += 0.09;
 
     let head = { ...snake[0] };
     head.x += Math.cos(angle) * speed;
     head.y += Math.sin(angle) * speed;
 
-    // Wall Collision
+    // Wall Check
     if (head.x < 0 || head.x > canvas.width || head.y < 0 || head.y > canvas.height) {
-        endGame();
+        if (!isInvincible) return endGame();
     }
 
     snake.unshift(head);
 
-    // Food Collision
-    const dist = Math.hypot(head.x - food.x, head.y - food.y);
-    if (dist < 25) {
+    // Food Check
+    if (Math.hypot(head.x - food.x, head.y - food.y) < 22) {
         score += 10;
         scoreEl.innerText = score.toString().padStart(3, '0');
-        speed += 0.15;
+        speed += 0.12;
         spawnFood();
     } else {
         snake.pop();
     }
 
-    // Body Collision
-    for(let i=15; i<snake.length; i++) {
-        if(Math.hypot(head.x - snake[i].x, head.y - snake[i].y) < 10) {
-            endGame();
+    // Body Check
+    if (!isInvincible) {
+        for(let i = 18; i < snake.length; i++) {
+            if(Math.hypot(head.x - snake[i].x, head.y - snake[i].y) < 8) return endGame();
         }
     }
 
@@ -114,52 +120,45 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw Food
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = '#ff00ff';
+    ctx.shadowBlur = 20; ctx.shadowColor = '#ff00ff';
     ctx.fillStyle = '#ff00ff';
-    ctx.beginPath();
-    ctx.arc(food.x, food.y, 10, 0, Math.PI*2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(food.x, food.y, 9, 0, Math.PI * 2); ctx.fill();
 
-    // Draw AG Snake
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = '#00f3ff';
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    for (let i = snake.length - 1; i >= 0; i--) {
-        const size = Math.max(6, 18 - (i * 0.4));
-        ctx.strokeStyle = `rgba(0, 243, 255, ${1 - (i / snake.length)})`;
-        ctx.lineWidth = size;
+    // Draw Snake
+    ctx.shadowBlur = 12; ctx.shadowColor = '#00f3ff';
+    
+    snake.forEach((part, i) => {
+        const size = Math.max(5, 15 - (i * 0.35));
+        ctx.fillStyle = isInvincible && i % 2 === 0 ? '#fff' : `rgba(0, 243, 255, ${1 - (i / snake.length)})`;
         
         ctx.beginPath();
-        if (i === 0) {
-            ctx.fillStyle = '#00f3ff';
-            ctx.arc(snake[i].x, snake[i].y, size/1.5, 0, Math.PI*2);
+        ctx.arc(part.x, part.y, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (i === 0) { // Head Eye
+            ctx.fillStyle = "#000"; ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(part.x + Math.cos(angle)*5, part.y + Math.sin(angle)*5, 2.5, 0, Math.PI*2);
             ctx.fill();
-        } else {
-            ctx.moveTo(snake[i-1].x, snake[i-1].y);
-            ctx.lineTo(snake[i].x, snake[i].y);
-            ctx.stroke();
         }
-    }
+    });
 }
 
-// Mobile Steering Logic
-window.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
-window.addEventListener('touchmove', e => {
-    if(!touchStartX) return;
-    let diff = e.touches[0].clientX - touchStartX;
-    angle += diff * 0.002; // Steering sensitivity
-});
+// Mobile Slide Steering
+window.addEventListener('touchstart', (e) => { lastTouchX = e.touches[0].clientX; }, { passive: false });
+window.addEventListener('touchmove', (e) => {
+    if (lastTouchX === null) return;
+    let deltaX = e.touches[0].clientX - lastTouchX;
+    angle += deltaX * 0.007; 
+    lastTouchX = e.touches[0].clientX;
+}, { passive: false });
+window.addEventListener('touchend', () => { lastTouchX = null; });
 
-// Keyboard
 window.addEventListener('keydown', e => keys[e.key] = true);
 window.addEventListener('keyup', e => keys[e.key] = false);
 
-// UI Buttons
-document.getElementById('start-btn').onclick = () => transition('intro', 'game-container');
-document.getElementById('restart-btn').onclick = () => transition('game-over', 'game-container');
+document.getElementById('start-btn').onclick = startMatch;
+document.getElementById('restart-btn').onclick = startMatch;
 
 function endGame() {
     gameActive = false;
@@ -167,6 +166,7 @@ function endGame() {
     document.body.classList.add('shake');
     setTimeout(() => {
         document.body.classList.remove('shake');
-        transition('game-container', 'game-over');
-    }, 500);
+        document.getElementById('game-container').classList.add('hidden');
+        document.getElementById('game-over').classList.remove('hidden');
+    }, 400);
 }
