@@ -1,13 +1,10 @@
-const CACHE_NAME = 'ag-snake-v2.4';
+const CACHE_NAME = 'ag-snake-v3';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './script.js',
-    './manifest.json',
-    './assets/sounds/eat.wav',
-    './assets/sounds/hit.wav',
-    './assets/sounds/bgm.mp3'
+    './manifest.json'
 ];
 
 self.addEventListener('install', e => {
