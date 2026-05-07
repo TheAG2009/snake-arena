@@ -1,20 +1,12 @@
 {
-  "name": "Snake Arena: Neon Evolution",
+  "name": "Snake Arena: AG Edition",
   "short_name": "SnakeArena",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0a0a0b",
   "theme_color": "#00f3ff",
   "icons": [
-    {
-      "src": "assets/icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "assets/icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "assets/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
