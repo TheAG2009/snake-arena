@@ -4,16 +4,21 @@
     --bg: #0a0a0b;
 }
 
-* { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+* { 
+    box-sizing: border-box; 
+    user-select: none; 
+    -webkit-tap-highlight-color: transparent; 
+}
 
 body, html {
     margin: 0; padding: 0;
     background: var(--bg);
     color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     overflow: hidden;
     height: 100%;
-    touch-action: none; /* Prevents browser handling of gestures */
+    width: 100%;
+    touch-action: none;
 }
 
 .overlay {
@@ -31,48 +36,43 @@ body, html {
     font-size: 3rem; color: var(--neon-cyan);
     text-shadow: 0 0 15px var(--neon-cyan);
     letter-spacing: 5px;
-    margin-bottom: 10px;
+    margin: 0;
 }
 
 .progress-container {
     width: 200px; height: 3px; background: #1a1a1a;
-    border-radius: 10px; overflow: hidden;
+    border-radius: 10px; margin: 20px 0;
 }
 
 #progress-bar {
     width: 0%; height: 100%; background: var(--neon-cyan);
     box-shadow: 0 0 10px var(--neon-cyan);
-    transition: width 0.2s ease;
 }
-
-.ag-tag { font-size: 0.7rem; color: #444; margin-top: 10px; letter-spacing: 3px; }
 
 .glow-button {
     background: transparent; border: 1px solid var(--neon-pink);
-    color: var(--neon-pink); padding: 18px 40px;
-    font-size: 1rem; letter-spacing: 2px;
-    cursor: pointer; box-shadow: 0 0 10px var(--neon-pink);
-    transition: 0.3s; margin-top: 20px;
+    color: var(--neon-pink); padding: 15px 35px;
+    font-size: 1rem; cursor: pointer;
+    box-shadow: 0 0 10px var(--neon-pink);
+    transition: 0.3s;
 }
 
-.glow-button:hover { background: var(--neon-pink); color: white; box-shadow: 0 0 25px var(--neon-pink); }
+.glow-button:hover { background: var(--neon-pink); color: white; }
 
 .game-header {
     position: absolute; top: 0; width: 100%;
     display: flex; justify-content: space-between;
     padding: 20px; z-index: 5;
-    background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
 }
 
-canvas { display: block; touch-action: none; }
+canvas { display: block; background: #000; }
 
-/* Shake effect for collision */
-@keyframes shake {
-    0% { transform: translate(2px, 2px); }
-    25% { transform: translate(-2px, -2px); }
-    50% { transform: translate(2px, -2px); }
-    75% { transform: translate(-2px, 2px); }
-    100% { transform: translate(0, 0); }
-}
+.ag-tag, .credits-tag { color: #555; letter-spacing: 2px; margin-top: 10px; font-size: 0.8rem; }
+
 .shake { animation: shake 0.2s linear infinite; }
+@keyframes shake {
+    0%, 100% { transform: translate(0,0); }
+    25% { transform: translate(2px,2px); }
+    75% { transform: translate(-2px,-2px); }
+}
