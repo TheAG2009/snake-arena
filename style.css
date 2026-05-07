@@ -4,13 +4,16 @@
     --bg: #0a0a0b;
 }
 
+* { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
 body, html {
     margin: 0; padding: 0;
     background: var(--bg);
     color: white;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow: hidden;
     height: 100%;
+    touch-action: none; /* Prevents browser handling of gestures */
 }
 
 .overlay {
@@ -18,52 +21,58 @@ body, html {
     background: var(--bg);
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
-    z-index: 10; transition: opacity 0.5s ease;
+    z-index: 10; transition: opacity 0.4s ease;
+    text-align: center;
 }
 
 .hidden { opacity: 0; pointer-events: none; }
 
 .neon-text {
     font-size: 3rem; color: var(--neon-cyan);
-    text-shadow: 0 0 20px var(--neon-cyan);
-    margin-bottom: 20px;
+    text-shadow: 0 0 15px var(--neon-cyan);
+    letter-spacing: 5px;
+    margin-bottom: 10px;
 }
 
 .progress-container {
-    width: 200px; height: 2px; background: #222;
+    width: 200px; height: 3px; background: #1a1a1a;
+    border-radius: 10px; overflow: hidden;
 }
 
 #progress-bar {
     width: 0%; height: 100%; background: var(--neon-cyan);
     box-shadow: 0 0 10px var(--neon-cyan);
+    transition: width 0.2s ease;
 }
+
+.ag-tag { font-size: 0.7rem; color: #444; margin-top: 10px; letter-spacing: 3px; }
 
 .glow-button {
     background: transparent; border: 1px solid var(--neon-pink);
-    color: var(--neon-pink); padding: 15px 30px;
-    cursor: pointer; box-shadow: 0 0 15px var(--neon-pink);
-    font-weight: bold; transition: 0.3s;
+    color: var(--neon-pink); padding: 18px 40px;
+    font-size: 1rem; letter-spacing: 2px;
+    cursor: pointer; box-shadow: 0 0 10px var(--neon-pink);
+    transition: 0.3s; margin-top: 20px;
 }
 
-.glow-button:hover {
-    background: var(--neon-pink); color: white;
-}
+.glow-button:hover { background: var(--neon-pink); color: white; box-shadow: 0 0 25px var(--neon-pink); }
 
 .game-header {
     position: absolute; top: 0; width: 100%;
     display: flex; justify-content: space-between;
     padding: 20px; z-index: 5;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(5px);
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
 }
 
-canvas { display: block; }
+canvas { display: block; touch-action: none; }
 
-.credits-tag { color: #555; font-size: 0.8rem; margin-bottom: 30px; letter-spacing: 2px; }
-
+/* Shake effect for collision */
 @keyframes shake {
-    0% { transform: translate(1px, 1px); }
-    50% { transform: translate(-2px, -1px); }
+    0% { transform: translate(2px, 2px); }
+    25% { transform: translate(-2px, -2px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-2px, 2px); }
     100% { transform: translate(0, 0); }
 }
-.shake { animation: shake 0.2s infinite; }
+.shake { animation: shake 0.2s linear infinite; }
