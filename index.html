@@ -5,48 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SNAKE ARENA | AG EDITION</title>
     
+    <!-- PWA / Mobile Meta -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0a0b">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Loading Screen -->
+    <!-- Stage 1: Loading -->
     <div id="loader" class="overlay">
         <div class="loader-content">
             <h1 class="neon-text">SNAKE ARENA</h1>
             <div class="progress-container"><div id="progress-bar"></div></div>
-            <p>CORE BY AG</p>
+            <p class="ag-tag">CORE ENGINE BY AG</p>
         </div>
     </div>
 
-    <!-- Intro Screen -->
+    <!-- Stage 2: Intro -->
     <div id="intro" class="overlay hidden">
         <div class="intro-content">
-            <h2 class="typing">NEON_EVOLUTION_v2.0</h2>
-            <p class="credits-tag">DEVELOPED BY AG</p>
-            <button id="start-btn" class="glow-button">INITIALIZE SYSTEM</button>
-            <p class="hint">PC: WASD / MOBILE: SWIPE TO STEER</p>
+            <h2 class="typing">SYSTEM_READY_v2.2</h2>
+            <p class="credits-tag">AUTHORIZED BY AG</p>
+            <button id="start-btn" class="glow-button">START MISSION</button>
+            <p class="hint">PC: A/D KEYS | MOBILE: SLIDE TO STEER</p>
         </div>
     </div>
 
-    <!-- Gameplay -->
+    <!-- Stage 3: Gameplay -->
     <main id="game-container" class="hidden">
         <header class="game-header">
             <div class="stat-box">SCORE: <span id="current-score">000</span></div>
-            <div class="stat-box">AG_OS v2</div>
+            <div class="stat-box">AG_OS // NEON</div>
         </header>
         <canvas id="gameCanvas"></canvas>
     </main>
 
-    <!-- Game Over -->
+    <!-- Stage 4: Game Over -->
     <div id="game-over" class="overlay hidden">
         <div class="over-content">
-            <h1 class="glitch" data-text="TERMINATED">TERMINATED</h1>
-            <p>FINAL SCORE: <span id="final-score">0</span></p>
-            <button id="restart-btn" class="glow-button">REBOOT</button>
+            <h1 class="glitch" data-text="CRITICAL FAILURE">CRITICAL FAILURE</h1>
+            <p class="final-score-text">NODES COLLECTED: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="glow-button">REBOOT SYSTEM</button>
             <p class="footer-credits">Special thanks to AG</p>
         </div>
     </div>
