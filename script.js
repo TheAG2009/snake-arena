@@ -1,24 +1,29 @@
-/** 
- * SNAKE ARENA: AG EDITION v2.3
- * Hybrid Engine: 360° Touch Follow + Snap-Grid WASD
+/** * SNAKE ARENA: AG EDITION v2.4
+ * Logic: 360° Follow (Mobile) | Snap-Grid (PC)
+ * Assets: Integrated with /assets/sounds/
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('current-score');
 
+// Load Sounds based on your directory
+const sfx = {
+    eat: new Audio('assets/sounds/eat.wav'),
+    hit: new Audio('assets/sounds/hit.wav'),
+    move: new Audio('assets/sounds/move.wav'),
+    bgm: new Audio('assets/sounds/bgm.mp3')
+};
+sfx.bgm.loop = true;
+
 let snake = [];
 let food = { x: 0, y: 0 };
 let score = 0;
-let angle = -Math.PI / 2; 
+let angle = -Math.PI / 2;
 let speed = 4;
 let gameActive = false;
 let isInvincible = false;
-
-// Input Variables
-let mode = 'keyboard'; 
-let moveX = 0;
-let moveY = -1;
+let moveX = 0, moveY = -1, mode = 'keyboard';
 
 window.onload = () => {
     resize();
@@ -33,33 +38,26 @@ function resize() {
 
 function initLoader() {
     let p = 0;
-    const bar = document.getElementById('progress-bar');
     const interval = setInterval(() => {
-        p += Math.random() * 25;
-        if (bar) bar.style.width = p + "%";
+        p += 10;
+        document.getElementById('progress-bar').style.width = p + "%";
         if (p >= 100) {
             clearInterval(interval);
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('intro').classList.remove('hidden');
-            }, 500);
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('intro').classList.remove('hidden');
         }
-    }, 150);
+    }, 100);
 }
 
 function startMatch() {
-    score = 0; speed = 4;
-    snake = [];
-    isInvincible = true;
-    moveX = 0; moveY = -1; 
-    if(scoreEl) scoreEl.innerText = "000";
+    score = 0; speed = 4; snake = [];
+    moveX = 0; moveY = -1;
+    scoreEl.innerText = "000";
+    sfx.bgm.play().catch(() => console.log("Audio requires user interaction"));
 
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    
-    for(let i = 0; i < 15; i++) {
-        snake.push({ x: centerX, y: centerY + (i * 2) });
-    }
+    for(let i = 0; i < 15; i++) snake.push({ x: centerX, y: centerY + (i * 2) });
     
     spawnFood();
     document.getElementById('intro').classList.add('hidden');
@@ -67,19 +65,18 @@ function startMatch() {
     document.getElementById('game-container').classList.remove('hidden');
     
     gameActive = true;
+    isInvincible = true;
     setTimeout(() => { isInvincible = false; }, 2000);
     requestAnimationFrame(update);
 }
 
 function spawnFood() {
-    const pad = 60;
-    food.x = Math.random() * (canvas.width - pad * 2) + pad;
-    food.y = Math.random() * (canvas.height - pad * 2) + pad;
+    food.x = Math.random() * (canvas.width - 100) + 50;
+    food.y = Math.random() * (canvas.height - 100) + 50;
 }
 
 function update() {
     if (!gameActive) return;
-
     let head = { ...snake[0] };
 
     if (mode === 'keyboard') {
@@ -101,13 +98,14 @@ function update() {
         score += 10;
         scoreEl.innerText = score.toString().padStart(3, '0');
         speed += 0.1;
+        sfx.eat.play();
         spawnFood();
     } else {
         snake.pop();
     }
 
     if (!isInvincible) {
-        for(let i = 18; i < snake.length; i++) {
+        for(let i = 20; i < snake.length; i++) {
             if(Math.hypot(head.x - snake[i].x, head.y - snake[i].y) < 8) return endGame();
         }
     }
@@ -119,51 +117,41 @@ function update() {
 function draw() {
     ctx.fillStyle = '#0a0a0b';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Node (Food)
-    ctx.shadowBlur = 20; ctx.shadowColor = '#ff00ff';
+    
+    // Food
+    ctx.shadowBlur = 15; ctx.shadowColor = '#ff00ff';
     ctx.fillStyle = '#ff00ff';
     ctx.beginPath(); ctx.arc(food.x, food.y, 10, 0, Math.PI*2); ctx.fill();
 
-    // Snake Visuals
-    ctx.shadowBlur = 12; ctx.shadowColor = '#00f3ff';
+    // Snake
+    ctx.shadowBlur = 10; ctx.shadowColor = '#00f3ff';
     snake.forEach((part, i) => {
-        const size = Math.max(5, 15 - (i * 0.35));
+        const size = Math.max(5, 15 - (i * 0.3));
         ctx.fillStyle = isInvincible && i % 2 === 0 ? '#fff' : `rgba(0, 243, 255, ${1 - (i/snake.length)})`;
         ctx.beginPath(); ctx.arc(part.x, part.y, size, 0, Math.PI*2); ctx.fill();
-        
-        if (i === 0) { // Head Eye Direction
-            ctx.fillStyle = "#000"; ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.arc(part.x + Math.cos(angle)*6, part.y + Math.sin(angle)*6, 2.5, 0, Math.PI*2);
-            ctx.fill();
-        }
     });
 }
 
-// 360° Touch Controller
-function handleTouch(e) {
-    if(!gameActive) return;
+// 360 Mobile Logic
+window.addEventListener('touchstart', (e) => {
     mode = 'touch';
-    const touch = e.touches[0];
-    const head = snake[0];
-    const dx = touch.clientX - head.x;
-    const dy = touch.clientY - head.y;
-    angle = Math.atan2(dy, dx);
-    e.preventDefault();
-}
+    angle = Math.atan2(e.touches[0].clientY - snake[0].y, e.touches[0].clientX - snake[0].x);
+}, {passive: false});
 
-window.addEventListener('touchstart', handleTouch, {passive: false});
-window.addEventListener('touchmove', handleTouch, {passive: false});
+window.addEventListener('touchmove', (e) => {
+    mode = 'touch';
+    angle = Math.atan2(e.touches[0].clientY - snake[0].y, e.touches[0].clientX - snake[0].x);
+    if(gameActive) e.preventDefault();
+}, {passive: false});
 
-// WASD / Arrow Key Controller
+// PC WASD Logic
 window.addEventListener('keydown', e => {
     mode = 'keyboard';
-    const key = e.key.toLowerCase();
-    if ((key === 'w' || key === 'arrowup') && moveY === 0) { moveX = 0; moveY = -1; }
-    if ((key === 's' || key === 'arrowdown') && moveY === 0) { moveX = 0; moveY = 1; }
-    if ((key === 'a' || key === 'arrowleft') && moveX === 0) { moveX = -1; moveY = 0; }
-    if ((key === 'd' || key === 'arrowright') && moveX === 0) { moveX = 1; moveY = 0; }
+    const k = e.key.toLowerCase();
+    if ((k === 'w' || k === 'arrowup') && moveY === 0) { moveX = 0; moveY = -1; sfx.move.play(); }
+    if ((k === 's' || k === 'arrowdown') && moveY === 0) { moveX = 0; moveY = 1; sfx.move.play(); }
+    if ((k === 'a' || k === 'arrowleft') && moveX === 0) { moveX = -1; moveY = 0; sfx.move.play(); }
+    if ((k === 'd' || k === 'arrowright') && moveX === 0) { moveX = 1; moveY = 0; sfx.move.play(); }
 });
 
 document.getElementById('start-btn').onclick = startMatch;
@@ -171,11 +159,9 @@ document.getElementById('restart-btn').onclick = startMatch;
 
 function endGame() {
     gameActive = false;
+    sfx.bgm.pause();
+    sfx.hit.play();
     document.getElementById('final-score').innerText = score;
-    document.body.classList.add('shake');
-    setTimeout(() => {
-        document.body.classList.remove('shake');
-        document.getElementById('game-container').classList.add('hidden');
-        document.getElementById('game-over').classList.remove('hidden');
-    }, 400);
+    document.getElementById('game-container').classList.add('hidden');
+    document.getElementById('game-over').classList.remove('hidden');
 }
