@@ -1,1 +1,84 @@
- 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snake Arena | Neon Evolution</title>
+    
+    <!-- PWA & iOS Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Snake Arena">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader" class="overlay">
+        <div class="loader-content">
+            <h1 class="neon-text-unflicker">SNAKE ARENA</h1>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <p id="loader-status">INITIALIZING SYSTEMS...</p>
+        </div>
+    </div>
+
+    <!-- Cinematic Intro -->
+    <div id="intro" class="overlay hidden">
+        <div class="intro-content">
+            <h2 class="typing">NEON_EVOLUTION_v1.0</h2>
+            <button id="start-btn" class="glow-button">PRESS START</button>
+        </div>
+    </div>
+
+    <!-- Main Game UI -->
+    <main id="game-container" class="hidden">
+        <header class="game-header">
+            <div class="stat-box">SCORE: <span id="current-score">000</span></div>
+            <div class="stat-box">HIGH: <span id="high-score">000</span></div>
+            <button id="mute-btn" class="icon-btn">🔊</button>
+        </header>
+
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- Mobile Controls Overlay -->
+            <div id="touch-controls">
+                <button class="ctrl-btn up" id="btn-up">▲</button>
+                <div class="mid-ctrls">
+                    <button class="ctrl-btn left" id="btn-left">◀</button>
+                    <button class="ctrl-btn right" id="btn-right">▶</button>
+                </div>
+                <button class="ctrl-btn down" id="btn-down">▼</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Game Over Screen -->
+    <div id="game-over" class="overlay hidden">
+        <div class="over-content">
+            <h1 class="glitch" data-text="GAME OVER">GAME OVER</h1>
+            <p>FINAL SCORE: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="glow-button">REINITIALIZE</button>
+        </div>
+    </div>
+
+    <!-- iOS Install Tutorial -->
+    <div id="ios-tutorial" class="tutorial-popup hidden">
+        <h3>Install on iPhone</h3>
+        <ol>
+            <li>Tap the <strong>Share</strong> button (box with arrow)</li>
+            <li>Scroll down and tap <strong>Add to Home Screen</strong></li>
+            <li>Tap <strong>Add</strong> to confirm</li>
+        </ol>
+        <button id="close-tutorial">GOT IT</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
