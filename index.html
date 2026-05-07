@@ -4,35 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SNAKE ARENA | AG EDITION</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0b">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="loader" class="overlay">
-        <h1 class="neon-text">SNAKE ARENA</h1>
-        <div class="progress-container"><div id="progress-bar"></div></div>
-        <p class="ag-tag">ENGINE BY AG</p>
+        <div class="loader-content">
+            <h1 class="neon-text">SNAKE ARENA</h1>
+            <div class="progress-container"><div id="progress-bar"></div></div>
+            <p class="ag-tag">ENGINE BY AG</p>
+        </div>
     </div>
 
     <div id="intro" class="overlay hidden">
-        <h2 class="neon-text">SYSTEM READY</h2>
-        <button id="start-btn" class="glow-button">START MISSION</button>
-        <p class="credits-tag">360° TOUCH | WASD PC</p>
+        <div class="intro-content">
+            <h2 class="neon-text">SYSTEM READY</h2>
+            <button id="start-btn" class="glow-button">START MISSION</button>
+            <p class="credits-tag">AUTHORIZED BY AG // v3.0</p>
+            <p class="hint">PC: WASD | MOBILE: 360° TOUCH</p>
+        </div>
     </div>
 
     <main id="game-container" class="hidden">
         <header class="game-header">
-            <div>SCORE: <span id="current-score">000</span></div>
-            <div>AG_OS v2.5</div>
+            <div class="stat-box">SCORE: <span id="current-score">000</span></div>
+            <div class="stat-box">AG_OS // HYPER-SPEED</div>
         </header>
         <canvas id="gameCanvas"></canvas>
     </main>
 
     <div id="game-over" class="overlay hidden">
-        <h1 class="neon-text">TERMINATED</h1>
-        <p>FINAL SCORE: <span id="final-score">0</span></p>
-        <button id="restart-btn" class="glow-button">REBOOT</button>
+        <div class="over-content">
+            <h1 class="neon-text glitch">TERMINATED</h1>
+            <p class="final-score-text">NODES COLLECTED: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="glow-button">REBOOT SYSTEM</button>
+            <p class="footer-credits">Special thanks to AG</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
