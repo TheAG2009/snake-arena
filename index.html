@@ -7,33 +7,27 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0a0b">
-
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Loading Screen -->
     <div id="loader" class="overlay">
         <div class="loader-content">
             <h1 class="neon-text">SNAKE ARENA</h1>
             <div class="progress-container"><div id="progress-bar"></div></div>
-            <p class="ag-tag">CORE ENGINE BY AG</p>
+            <p class="ag-tag">ENGINE BY AG</p>
         </div>
     </div>
 
-    <!-- Intro Screen -->
     <div id="intro" class="overlay hidden">
         <div class="intro-content">
-            <h2 class="typing">SYSTEM_READY_v2.3</h2>
-            <p class="credits-tag">AUTHORIZED BY AG</p>
+            <h2 class="neon-text">SYSTEM READY</h2>
             <button id="start-btn" class="glow-button">START MISSION</button>
-            <p class="hint">PC: WASD / MOBILE: TOUCH & DRAG 360°</p>
+            <p class="credits-tag">AUTHORIZED BY AG</p>
         </div>
     </div>
 
-    <!-- Gameplay Area -->
     <main id="game-container" class="hidden">
         <header class="game-header">
             <div class="stat-box">SCORE: <span id="current-score">000</span></div>
@@ -42,16 +36,20 @@
         <canvas id="gameCanvas"></canvas>
     </main>
 
-    <!-- Game Over Screen -->
     <div id="game-over" class="overlay hidden">
         <div class="over-content">
-            <h1 class="glitch" data-text="TERMINATED">TERMINATED</h1>
-            <p class="final-score-text">NODES COLLECTED: <span id="final-score">0</span></p>
-            <button id="restart-btn" class="glow-button">REBOOT SYSTEM</button>
+            <h1 class="neon-text">TERMINATED</h1>
+            <p>NODES COLLECTED: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="glow-button">REBOOT</button>
             <p class="footer-credits">Special thanks to AG</p>
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
